@@ -3895,7 +3895,9 @@ RuntimeStub* SharedRuntime::generate_resolve_blob(address destination, const cha
   // allocate space for the code
   ResourceMark rm;
 
-  CodeBuffer buffer(name, 1000, 512);
+  // increases the stub size for AVX512 machines
+  const int BUFFER_SIZE = 1200;
+  CodeBuffer buffer(name, BUFFER_SIZE, 512);
   MacroAssembler* masm                = new MacroAssembler(&buffer);
 
   int frame_size_in_words;
