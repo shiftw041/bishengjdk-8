@@ -109,16 +109,6 @@ static jint CurrentVersion = JNI_VERSION_1_8;
 // the return value must be passed to the contructor of the object, and
 // the return value must be set before return (since the mark object has
 // a reference to it).
-//
-// Example:
-// DT_RETURN_MARK_DECL(SomeFunc, int);
-// JNI_ENTRY(int, SomeFunc, ...)
-//   int return_value = 0;
-//   DT_RETURN_MARK(SomeFunc, int, (const int&)return_value);
-//   foo(CHECK_0)
-//   return_value = 5;
-//   return return_value;
-// JNI_END
 #ifndef USDT2
 #define DT_RETURN_MARK_DECL(name, type)                                    \
   HS_DTRACE_PROBE_DECL1(hotspot_jni, name##__return, type);                \
@@ -246,14 +236,6 @@ intptr_t jfieldIDWorkaround::encode_klass_hash(Klass* k, intptr_t offset) {
     uintptr_t klass_hash = field_klass->identity_hash();
     return ((klass_hash & klass_mask) << klass_shift) | checked_mask_in_place;
   } else {
-#if 0
-    #ifndef PRODUCT
-    {
-      ResourceMark rm;
-      warning("VerifyJNIFields: long offset %d in %s", offset, k->external_name());
-    }
-    #endif
-#endif
     return 0;
   }
 }
@@ -280,14 +262,6 @@ void jfieldIDWorkaround::verify_instance_jfieldID(Klass* k, jfieldID id) {
       guarantee(klass_hash_ok(k, id),
     "Bug in native code: jfieldID class must match object");
     } else {
-#if 0
-      #ifndef PRODUCT
-      if (Verbose) {
-  ResourceMark rm;
-  warning("VerifyJNIFields: unverified offset %d for %s", offset, k->external_name());
-      }
-      #endif
-#endif
     }
   }
   guarantee(InstanceKlass::cast(k)->contains_field_offset(offset),
